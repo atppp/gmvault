@@ -373,6 +373,11 @@ class GmailStorer(object): #pylint:disable=R0902,R0904,R0914
 
         return gmail_ids
 
+    def _get_abs_local_dir(self, local_dir):
+        if os.path.isabs(local_dir):
+            return local_dir
+        return '%s/%s' % (self._db_dir, local_dir)
+
     def bury_chat_metadata(self, email_info, local_dir = None):
         """
            Like bury metadata but with an extra label gmvault-chat
@@ -388,7 +393,7 @@ class GmailStorer(object): #pylint:disable=R0902,R0904,R0914
              local_dir : intermediary dir (month dir)
         """
         if local_dir:
-            the_dir = '%s/%s' % (self._db_dir, local_dir)
+            the_dir = self._get_abs_local_dir(local_dir)
             gmvault_utils.makedirs(the_dir)
         else:
             the_dir = self._db_dir
@@ -452,7 +457,7 @@ class GmailStorer(object): #pylint:disable=R0902,R0904,R0914
              compress  : if compress is True, use gzip compression
         """
         if local_dir:
-            the_dir = '%s/%s' % (self._db_dir, local_dir)
+            the_dir = self._get_abs_local_dir(local_dir)
             gmvault_utils.makedirs(the_dir)
         else:
             the_dir = self._db_dir
@@ -525,7 +530,7 @@ class GmailStorer(object): #pylint:disable=R0902,R0904,R0914
 
         #local_dir can be passed to avoid scanning the filesystem (because of WIN7 fs weaknesses)
         if a_local_dir:
-            the_dir = '%s/%s' % (self._db_dir, a_local_dir)
+            the_dir = self._get_abs_local_dir(a_local_dir)
             if os.path.exists(self.METADATA_FNAME % (the_dir, a_id)):
                 return the_dir
         else:
@@ -551,7 +556,7 @@ class GmailStorer(object): #pylint:disable=R0902,R0904,R0914
 
         #local_dir can be passed to avoid scanning the filesystem (because of WIN7 fs weaknesses)
         if a_local_dir:
-            the_dir = '%s/%s' % (self._db_dir, a_local_dir)
+            the_dir = self._get_abs_local_dir(a_local_dir)
             if os.path.exists(self.METADATA_FNAME % (the_dir, a_id)):
                 return the_dir
         else:
